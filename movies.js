@@ -15,11 +15,10 @@ let db = firebase.firestore()
 
   // ⬇️ ⬇️ ⬇️
 
-  let apiKey = 'd071155b9ef8b1a6d5c5c8e9fa7ad957'
-  let response = await fetch (`https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=en-US`) // .json?
+
+  let response = await fetch (`https://api.themoviedb.org/3/movie/now_playing?api_key=d071155b9ef8b1a6d5c5c8e9fa7ad957&language=en-US`) 
   let json = await response.json()
-  // console.dir(json)
-  let movies = json.results // individual movies are under results 
+  let movies = json.results 
   console.log(movies)
 
 
@@ -44,26 +43,35 @@ let db = firebase.firestore()
 
   // ⬇️ ⬇️ ⬇️
 
-// function renderMovies(movies) {
-
-
-
   for (let i=0; i<movies.length; i++) {
-    let movie = movies[i].id
-   // let movie = movies[i].data()
+    let movieId = movies[i].id
+    let posterUrl = movies[i].poster_path
 
+    let docRef = await db.collection('watchedmovie').doc(`${movieId}`).get()
+    let watchedmovie = docRef.data()
+  
     document.querySelector('.movies').insertAdjacentHTML('beforeend',` 
-     <div class="w-1/5 p-4 ${movie.id}">
-      <img src="https://image.tmdb.org/t/p/w500/${movie.poster.path}" class="w-full">
+     <div class="w-1/5 p-4 ${movieId}">
+      <img src="https://image.tmdb.org/t/p/w500/${posterUrl}" class="w-full">
       <a href="#" class="watched-button block text-center text-white bg-green-500 mt-4 px-4 py-2 rounded">I've watched this!</a>
      </div>
         `)
+
+    document.querySelector(`.watched-button`).addEventListener('click', async function(event){
+        event.preventDefault()
+        document.querySelector('.movies').classList.add('opacity-20')
+        console.log(`Movie ${movieID} was watched.`)
     
-
- //}
-
-
+    let querySnapshot = await db.collection('watched').get()
+    let watched = querySnapshot.docs
+    for (let j=0; j < watched.length; j++){
+        let watched = watched[j].data()
+        watched.name
+      }
+      })
   }
+        
+
 
   // ⬆️ ⬆️ ⬆️ 
   // End Step 2
@@ -101,3 +109,5 @@ let db = firebase.firestore()
   // - Hint: you can use if (document) with no comparison
   //   operator to test for the existence of an object.
 })
+
+
