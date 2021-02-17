@@ -1,80 +1,43 @@
 
 
-//don't create a collection
-
 window.addEventListener('DOMContentLoaded', async function(event) {
 let db = firebase.firestore()
-
-  // Step 1: Construct a URL to get movies playing now from TMDB, fetch
-  // data and put the Array of movie Objects in a variable called
-  // movies. Write the contents of this array to the JavaScript
-  // console to ensure you've got good data
-
-  // For this exercise, we'll be using the "now playing" API endpoint
-// https://api.themoviedb.org/3/movie/now_playing?api_key=${apiKey}&language=en-US
-
-  // ⬇️ ⬇️ ⬇️
-
 
   let response = await fetch (`https://api.themoviedb.org/3/movie/now_playing?api_key=d071155b9ef8b1a6d5c5c8e9fa7ad957&language=en-US`) 
   let json = await response.json()
   let movies = json.results 
   console.log(movies)
 
-
-  // ⬆️ ⬆️ ⬆️ 
-  // End Step 1
-  
-  // Step 2: 
-  // - Loop through the Array called movies and insert HTML
-  //   into the existing DOM element with the class name .movies
-  // - Include a "watched" button to click for each movie
-  // - Give each "movie" a unique class name based on its numeric
-  //   ID field.
-  // Some HTML that would look pretty good... replace with real values :)
-  // <div class="w-1/5 p-4 movie-abcdefg1234567">
-  //   <img src="https://image.tmdb.org/t/p/w500/moviePosterPath.jpg" class="w-full">
-  //   <a href="#" class="watched-button block text-center text-white bg-green-500 mt-4 px-4 py-2 rounded">I've watched this!</a>
-  // </div>
-
-  // Note: image data returned by the API will only give you the filename;
-// prepend with `https://image.tmdb.org/t/p/w500/` to get the 
-// complete image URL
-
-  // ⬇️ ⬇️ ⬇️
-
   for (let i=0; i<movies.length; i++) {
     let movieId = movies[i].id
     let posterUrl = movies[i].poster_path
-
-    let docRef = await db.collection('watchedmovie').doc(`${movieId}`).get()
-    let watchedmovie = docRef.data()
-  
+      
     document.querySelector('.movies').insertAdjacentHTML('beforeend',` 
-     <div class="w-1/5 p-4 ${movieId}">
+     <div class="w-1/5 p-4 movie-${movieId}">
       <img src="https://image.tmdb.org/t/p/w500/${posterUrl}" class="w-full">
       <a href="#" class="watched-button block text-center text-white bg-green-500 mt-4 px-4 py-2 rounded">I've watched this!</a>
      </div>
         `)
 
-    document.querySelector(`.watched-button`).addEventListener('click', async function(event){
-        event.preventDefault()
-        document.querySelector('.movies').classList.add('opacity-20')
-        console.log(`Movie ${movieID} was watched.`)
+        let docRef = await db.collection('watchedMovie').doc(`${movieId}`).get()
+        let movieClicked = docRef.data()
     
-    let querySnapshot = await db.collection('watched').get()
-    let watched = querySnapshot.docs
-    for (let j=0; j < watched.length; j++){
-        let watched = watched[j].data()
-        watched.name
+        if(movieClicked){
+          let movieViewed = document.querySelector(`.movie-${movieId}`)
+          movieViewed.classList.add('opacity-20')
       }
+         let watchedButton = document.querySelector(`.movie-${movieId}`)
+        console.log(watchedButton)
+        watchedButton.addEventListener(`click`, async function(event){
+        event.preventDefault()
+        let movieViewed = document.querySelector(`.movie-${movieId}`)
+        movieViewed.classList.add('opacity-20')
+        await db.collection(`watched`).doc(`${movieId}`).set({})
+      
       })
-  }
-        
-
-
-  // ⬆️ ⬆️ ⬆️ 
-  // End Step 2
+    }
+  
+ 
 
   // Step 3: 
   // - Attach an event listener to each "watched button"
