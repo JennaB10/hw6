@@ -11,7 +11,10 @@ let db = firebase.firestore()
   for (let i=0; i<movies.length; i++) {
     let movieId = movies[i].id
     let posterUrl = movies[i].poster_path
-      
+  
+  
+
+
     document.querySelector('.movies').insertAdjacentHTML('beforeend',` 
      <div class="w-1/5 p-4 movie-${movieId}">
       <img src="https://image.tmdb.org/t/p/w500/${posterUrl}" class="w-full">
@@ -19,7 +22,7 @@ let db = firebase.firestore()
      </div>
         `)
 
-        let docRef = await db.collection('watchedMovie').doc(`${movieId}`).get()
+        let docRef = await db.collection('watched').doc(`${movieId}`).get()
         let movieClicked = docRef.data()
     
         if(movieClicked){
@@ -37,40 +40,6 @@ let db = firebase.firestore()
       })
     }
   
- 
-
-  // Step 3: 
-  // - Attach an event listener to each "watched button"
-  // - Be sure to prevent the default behavior of the button
-  // - When the "watched button" is clicked, changed the opacity
-  //   of the entire "movie" by using .classList.add('opacity-20')
-  // - When done, refresh the page... does the opacity stick?
-  // - Bonus challenge: add code to "un-watch" the movie by
-  //   using .classList.contains('opacity-20') to check if 
-  //   the movie is watched. Use .classList.remove('opacity-20')
-  //   to remove the class if the element already contains it.
-  // ⬇️ ⬇️ ⬇️
-
-  // ⬆️ ⬆️ ⬆️ 
-  // End Step 3
-
-  // Step 4: 
-  // - Properly configure Firebase and Firebase Cloud Firestore
-  // - Inside your "watched button" event listener, you wrote in
-  //   step 3, after successfully setting opacity, persist data
-  //   for movies watched to Firebase.
-  // - The data could be stored in a variety of ways, but the 
-  //   easiest approach would be to use the TMDB movie ID as the
-  //   document ID in a "watched" Firestore collection.
-  // - Hint: you can use .set({}) to create a document with
-  //   no data – in this case, the document doesn't need any data;
-  //   if a TMDB movie ID is in the "watched" collection, the 
-  //   movie has been watched, otherwise it hasn't.
-  // - Modify the code you wrote in Step 2 to conditionally
-  //   make the movie opaque if it's already watched in the 
-  //   database.
-  // - Hint: you can use if (document) with no comparison
-  //   operator to test for the existence of an object.
-})
+ })
 
 
